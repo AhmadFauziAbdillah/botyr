@@ -1,6 +1,6 @@
 kind: wasmer.io/App.v0
 name: whatsapp-bot-php
-package: your-username/whatsapp-bot-php
+package: yrteam/whatsapp-bot-php
 
 scaling:
   mode: single_concurrency
@@ -46,3 +46,4 @@ volumes:
 
 capabilities:
   - instaboot
+
