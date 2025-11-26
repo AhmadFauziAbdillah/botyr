@@ -1,49 +1,49 @@
+# ⚠️ WARNING: Ini format yang BENAR untuk Wasmer Edge
+# TAPI bot WhatsApp TIDAK AKAN BERFUNGSI di Wasmer karena:
+# 1. Bot butuh persistent WebSocket connection
+# 2. Wasmer Edge adalah stateless platform (request-response)
+# 3. Auth state akan hilang setiap restart
+# 4. Node.js process tidak bisa run 24/7
+
 kind: wasmer.io/App.v0
 name: whatsapp-bot-php
-package: yrteam/whatsapp-bot-php
+owner: yrteam
+package: .
 
+# Environment variables
+env:
+  NODE_ENV: production
+  PORT: "8080"
+
+# CLI arguments untuk PHP
+cli_args:
+  - "-t"
+  - "/app"
+  - "-S"
+  - "0.0.0.0:8080"
+
+# Scaling mode
 scaling:
   mode: single_concurrency
 
-services:
-  - name: php-web
-    source:
-      package: php/php:8.2
-      entrypoint: php-webserver
-    http:
-      routes:
-        - path: /
-          port: 8080
-    env:
-      - name: PORT
-        value: "8080"
-    volumes:
-      - name: app-files
-        mounts:
-          - volume: app-files
-            mount-path: /app
-
-  - name: node-bot
-    source:
-      package: wasmer/node:18
-      entrypoint: node
-    command:
-      - bot.js
-    env:
-      - name: NODE_ENV
-        value: production
-      - name: PORT
-        value: "3000"
-    volumes:
-      - name: app-files
-        mounts:
-          - volume: app-files
-            mount-path: /app
-
-volumes:
-  - name: app-files
-    kind: ephemeral
-
+# Capabilities - INI FORMAT YANG BENAR
 capabilities:
-  - instaboot
+  instaboot:
+    requests:
+      - path: /
+        method: GET
 
+# Health checks (optional)
+health_checks:
+  - http:
+      method: get
+      path: /
+      interval: 30s
+      timeout: 10s
+      unhealthy_threshold: 2
+      healthy_threshold: 1
+      expected_status_codes:
+        - 200
+
+# Debug mode
+debug: true
