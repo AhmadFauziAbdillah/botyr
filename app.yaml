@@ -1,21 +1,48 @@
+kind: wasmer.io/App.v0
+name: whatsapp-bot-php
+package: your-username/whatsapp-bot-php
 
-kind: "ApplicationV1"
-metadata:
-  name: "whatsapp-bot-php"
-  namespace: "your-username"
+scaling:
+  mode: single_concurrency
 
-spec:
-  package:
-    name: "whatsapp-bot-php"
-    registry: "wasmer.io"
-    version: "1.0.0"
-  
-  env:
-    - name: "PORT"
-      value: "8080"
-    - name: "NODE_ENV"
-      value: "production"
-  
-  # Enable persistent workload for bot daemon
-  capabilities:
-    - instaboot
+services:
+  - name: php-web
+    source:
+      package: php/php:8.2
+      entrypoint: php-webserver
+    http:
+      routes:
+        - path: /
+          port: 8080
+    env:
+      - name: PORT
+        value: "8080"
+    volumes:
+      - name: app-files
+        mounts:
+          - volume: app-files
+            mount-path: /app
+
+  - name: node-bot
+    source:
+      package: wasmer/node:18
+      entrypoint: node
+    command:
+      - bot.js
+    env:
+      - name: NODE_ENV
+        value: production
+      - name: PORT
+        value: "3000"
+    volumes:
+      - name: app-files
+        mounts:
+          - volume: app-files
+            mount-path: /app
+
+volumes:
+  - name: app-files
+    kind: ephemeral
+
+capabilities:
+  - instaboot
