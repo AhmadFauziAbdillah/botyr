@@ -1,0 +1,5 @@
+[package]
+name = "your-username/whatsapp-bot-php"
+version = "1.0.0"
+description = "WhatsApp Bot menggunakan PHP + Node.js"
+main = "index.php"
