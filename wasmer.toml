@@ -1,5 +1,5 @@
 [package]
-name = "your-username/whatsapp-bot-php"
+name = "yrteam/whatsapp-bot-php"
 version = "1.0.0"
 description = "WhatsApp Bot menggunakan PHP + Node.js di Wasmer Edge"
 license = "MIT"
@@ -39,3 +39,4 @@ runner = "https://webc.org/runner/wasi"
 [command.annotations.wasi]
 main-args = ["bot.js"]
 env = ["NODE_ENV=production", "PORT=3000"]
+
