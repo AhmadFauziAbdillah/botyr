@@ -1,5 +1,41 @@
 [package]
 name = "your-username/whatsapp-bot-php"
 version = "1.0.0"
-description = "WhatsApp Bot menggunakan PHP + Node.js"
-main = "index.php"
+description = "WhatsApp Bot menggunakan PHP + Node.js di Wasmer Edge"
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+"php/php" = "^8.2"
+"wasmerio/wintercg-headers" = "^1"
+
+[[module]]
+name = "php-server"
+source = "php/php:php-webserver"
+abi = "wasi"
+
+[[command]]
+name = "start"
+module = "php-server"
+runner = "https://webc.org/runner/wasi"
+
+[command.annotations.wasi]
+main-args = ["-t", "/app", "-S", "0.0.0.0:8080"]
+env = ["PORT=8080"]
+
+[fs]
+"/app" = "."
+
+[[module]]
+name = "node-bot"
+source = "."
+abi = "wasi"
+
+[[command]]
+name = "bot"
+module = "node-bot"
+runner = "https://webc.org/runner/wasi"
+
+[command.annotations.wasi]
+main-args = ["bot.js"]
+env = ["NODE_ENV=production", "PORT=3000"]
